@@ -1,0 +1,64 @@
+{% extends 'templates/base.html' %}
+{% block main %}
+    <!-- Breadcrumb Start -->
+    <div class="container-fluid">
+        <div class="row px-xl-5">
+            <div class="col-12">
+                <nav class="breadcrumb bg-light mb-30">
+                    <a class="breadcrumb-item text-dark" href="{% url 'product:home_page' %}">Home</a>
+                    <a class="breadcrumb-item text-dark" href="{% url 'product:shop_page' %}">Shop</a>
+                    <span class="breadcrumb-item active">Checkout</span>
+                </nav>
+            </div>
+        </div>
+    </div>
+    <!-- Breadcrumb End -->
+
+
+    <!-- Checkout Start -->
+    <div class="container-fluid">
+        <div class="mr-auto">
+            <div class="">
+                <h5 class="section-title position-relative text-uppercase mb-3"><span class="bg-secondary pr-3">Billing Address</span>
+                </h5>
+                <div class="bg-light p-30 mb-5">
+                    {% for error in form.phone.errors %}
+                        <p class="alert alert-danger">{{ error }}</p>
+                    {% endfor %}
+                    <form method="post">
+                        {% csrf_token %}
+                        <div class="row">
+                            <div class="col-md-6 form-group">
+                                <label>Full Name</label>
+                                {{ form.fullname }}
+                            </div>
+                            <div class="col-md-6 form-group">
+                                <label>E-mail</label>
+                                {{ form.email }}
+                            </div>
+                            <div class="col-md-6 form-group">
+                                <label>Phone Number</label>
+                                {{ form.phone }}
+                            </div>
+                            <div class="col-md-6 form-group">
+                                <label>City</label>
+                                {{ form.city }}
+                            </div>
+                            <div class="col-md-6 form-group">
+                                <label>Postal-Code</label>
+                                {{ form.postal_code }}
+                            </div>
+                            <div class="col-md-6 form-group">
+                                <label>Address</label>
+                                {{ form.address }}
+                            </div>
+                            <button type="submit" class="btn btn-warning rounded">Submit</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+        </div>
+    </div>
+    <!-- Checkout End -->
+{% endblock %}

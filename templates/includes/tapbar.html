@@ -1,0 +1,57 @@
+<div class="container-fluid">
+    <div class="row bg-secondary py-1 px-xl-5">
+        <div class="col-lg-6 d-none d-lg-block">
+            <div class="d-inline-flex align-items-center h-100">
+                <a class="text-body mr-3" href="{% url 'contactUs:contact_page' %}">Contact</a>
+            </div>
+        </div>
+        <div class="col-lg-6 text-center text-lg-right">
+            <div class="d-inline-flex align-items-center">
+                <div class="btn-group">
+                    <button type="button" class="btn btn-sm btn-light dropdown-toggle" data-toggle="dropdown">My
+                        Account
+                    </button>
+                    <div class="dropdown-menu dropdown-menu-right">
+                        {% if request.user.is_authenticated %}
+                            <a href="{% url 'account:update_page' %}" class="dropdown-item" type="button">Edit Account</a>
+                            <a href="{% url 'account:logout_page' %}" class="dropdown-item" type="button">Logout</a>
+                        {% else %}
+                            <a href="{% url 'account:Login_page' %}" class="dropdown-item" type="button">Login</a>
+                            <a href="{% url 'account:register_page' %}" class="dropdown-item" type="button">Register</a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row align-items-center bg-light py-3 px-xl-5 d-none d-lg-flex">
+        <div class="col-lg-4">
+            <a href="" class="text-decoration-none">
+                <span class="h1 text-uppercase text-primary bg-dark px-2">Multi</span>
+                <span class="h1 text-uppercase text-dark bg-primary px-2 ml-n1">Shop</span>
+            </a>
+        </div>
+        <div class="col-lg-4 col-6 text-left">
+            <form action="{% url 'product:searchDetail_page' %}" method="post">
+                {% csrf_token %}
+                <div class="input-group">
+                    <input type="text" name="search" class="form-control" placeholder="Search for products">
+                    <div class="input-group-append">
+                            <span class="input-group-text bg-transparent text-primary">
+                                <i class="fa fa-search"></i>
+                            </span>
+                    </div>
+                </div>
+            </form>
+        </div>
+        <div class="col-lg-4 col-6 text-right">
+            {% if request.user.is_authenticated %}
+                <p class="m-0">{{ request.user.fullname }}</p>
+                <h5 class="m-0">{{ request.user.email }}</h5>
+            {% else %}
+                <p class="m-0">Customer Service</p>
+                <h5 class="m-0">+98 935 123 7688</h5>
+            {% endif %}
+        </div>
+    </div>
+</div>

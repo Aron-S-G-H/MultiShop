@@ -1,0 +1,87 @@
+{% extends 'templates/base.html' %}
+{% block main %}
+    <!-- Breadcrumb Start -->
+    <div class="container-fluid">
+        <div class="row px-xl-5">
+            <div class="col-12">
+                <nav class="breadcrumb bg-light mb-30">
+                    <a class="breadcrumb-item text-dark" href="{% url 'product:home_page' %}">Home</a>
+                    <span class="breadcrumb-item active">Contact</span>
+                </nav>
+            </div>
+        </div>
+    </div>
+    <!-- Breadcrumb End -->
+
+
+    <!-- Contact Start -->
+    <div class="container-fluid">
+        <h2 class="section-title position-relative text-uppercase text-center mx-xl-5 mb-4"><span
+                class="bg-secondary pr-3">Contact Us</span></h2>
+        <div class=" px-xl-5">
+            <div class=" mb-5 contact-us" style="">
+                <div class="contact-form bg-light p-30">
+                    <p id="response">{{ message }}</p>
+                    <form method="post">
+                        {% csrf_token %}
+                        {% for form in forms %}
+                            <div class="control-group">
+                                {{ form }}
+                                <p class="help-block text-danger"></p>
+                            </div>
+                        {% endfor %}
+                        {% if request.user.is_authenticated %}
+                            <div>
+                                <button class="btn btn-primary py-2 px-4" type="submit" id="sendMessageButton">Send
+                                    Message
+                                </button>
+                            </div>
+                        {% else %}
+                            <div>
+                                <a href="{% url 'account:Login_page' %}?next={% url 'contactUs:contact_page' %}"
+                                   class="btn btn-primary py-2 px-4">Log in</a>
+                            </div>
+                        {% endif %}
+                    </form>
+                </div>
+            </div>
+
+        </div>
+    </div>
+    <!-- Contact End -->
+    <script>
+        const submitButton = document.getElementById('sendMessageButton');
+        submitButton.addEventListener('click', function (event){
+            event.preventDefault();
+
+            let name = document.getElementById('name');
+            let email = document.getElementById('email');
+            let subject = document.getElementById('subject');
+            let message = document.getElementById('message');
+            let formData = new FormData();
+            let responseMessage = document.getElementById('response');
+            console.log(responseMessage, name, email)
+            formData.append('name', name.value);
+            formData.append('email', email.value);
+            formData.append('title', subject.value);
+            formData.append('message', message.value);
+            formData.append('csrfmiddlewaretoken', '{{ csrf_token }}');
+
+            axios.post("{% url 'contactUs:contact_page' %}", formData)
+                .then(response => {
+                    if (response.data.status === 200){
+                        responseMessage.innerText = 'Your Message sent successfully';
+                        responseMessage.className = 'alert alert-info';
+                        subject.value = '';
+                        message.value = '';
+                    }else {
+                        responseMessage.innerText = 'Bad Request - Status 400';
+                        responseMessage.className = 'alert alert-danger';
+                        subject.value = '';
+                        message.value = '';
+                    }
+                })
+                .catch(err => console.log(err))
+        })
+    </script>
+{% endblock %}

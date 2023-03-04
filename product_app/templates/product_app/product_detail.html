@@ -1,0 +1,243 @@
+{% extends 'templates/base.html' %}
+{% load static %}
+{% block main %}
+
+    <!-- Breadcrumb Start -->
+    <div class="container-fluid">
+        <div class="row px-xl-5">
+            <div class="col-12">
+                <nav class="breadcrumb bg-light mb-30">
+                    <a class="breadcrumb-item text-dark" href="{% url 'product:home_page' %}">Home</a>
+                    <a class="breadcrumb-item text-dark" href="{% url 'product:shop_page' %}">Shop</a>
+                    <span class="breadcrumb-item active">Shop Detail</span>
+                </nav>
+            </div>
+        </div>
+    </div>
+    <!-- Breadcrumb End -->
+
+    <!-- Shop Detail Start -->
+    <div class="container-fluid pb-5">
+        <div class="row px-xl-5">
+            <div class="col-lg-5 mb-30">
+                <div id="product-carousel" class="carousel slide" data-ride="carousel">
+                    <div class="carousel-inner bg-light">
+                        <div class="carousel-item active">
+                            <img class="w-100 h-100" src="{{ product.image.url }}" alt="Image">
+                        </div>
+                    </div>
+                    <a class="carousel-control-prev" href="#product-carousel" data-slide="prev">
+                        <i class="fa fa-2x fa-angle-left text-dark"></i>
+                    </a>
+                    <a class="carousel-control-next" href="#product-carousel" data-slide="next">
+                        <i class="fa fa-2x fa-angle-right text-dark"></i>
+                    </a>
+                </div>
+            </div>
+
+            <div class="col-lg-7 h-auto mb-30">
+                <div class="h-100 bg-light p-30">
+                    <h3>{{ product.product_name.capitalize }}</h3>
+                    {% if product.discount %}
+                        <span class="font-weight-semi-bold mb-4 text-muted"><del>${{ product.price }}</del></span>
+                        <h3 class="font-weight-semi-bold mb-4">${{ product.discount }}</h3>
+                    {% else %}
+                        <h3 class="font-weight-semi-bold mb-4">${{ product.price }}</h3>
+                    {% endif %}
+                    <p class="mb-4">Volup erat ipsum diam elitr rebum et dolor. Est nonumy elitr erat diam stet sit
+                        clita ea. Sanc ipsum et, labore clita lorem magna duo dolor no sea
+                        Nonumy</p>
+                    <form action="{% url 'basket:addToBasket' product.id %}" method="post">
+                        {% csrf_token %}
+                        {% if product.size.all %}
+                            <div class="d-flex mb-3">
+                                <strong class="text-dark mr-3">Sizes:</strong>
+                                {% for size in product.size.all %}
+                                    <div class="custom-control custom-radio custom-control-inline">
+                                        <input type="radio" class="custom-control-input" id="{{ size.title }}"
+                                               name="size" value="{{ size.title }}" required>
+                                        <label class="custom-control-label"
+                                               for="{{ size.title }}">{{ size.title.upper }}</label>
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                        {% if product.color.all %}
+                            <div class="d-flex mb-4">
+                                <strong class="text-dark mr-3">Colors:</strong>
+                                {% for color in product.color.all %}
+                                    <div class="custom-control custom-radio custom-control-inline">
+                                        <input type="radio" class="custom-control-input" id="{{ color.title }}"
+                                               name="color" value="{{ color.title }}" required>
+                                        <label class="custom-control-label"
+                                               for="{{ color.title }}">{{ color.title.capitalize }}</label>
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                        <div class="d-flex align-items-center mb-4 pt-2">
+                            <div class="input-group quantity mr-3" style="width: 130px;">
+                                <div class="input-group-btn">
+                                    <button type="button" class="btn btn-primary btn-minus">
+                                        <i class="fa fa-minus"></i>
+                                    </button>
+                                </div>
+                                <input type="text" name="quantity" class="form-control bg-secondary border-0 text-center" value="1">
+                                <div class="input-group-btn">
+                                    <button type="button" class="btn btn-primary btn-plus">
+                                        <i class="fa fa-plus"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <button class="btn btn-primary px-3"><i class="fa fa-shopping-cart mr-1"></i> Add To Cart
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div class="row px-xl-5">
+            <div class="col">
+                <div class="bg-light p-30">
+                    <div class="nav nav-tabs mb-4">
+                        <a class="nav-item nav-link text-dark active" data-toggle="tab"
+                           href="#tab-pane-1">Description</a>
+                        <a class="nav-item nav-link text-dark" data-toggle="tab" href="#tab-pane-2">Information</a>
+                        <a class="nav-item nav-link text-dark" data-toggle="tab" href="#tab-pane-3">Reviews
+                            ({{ product.comments.count }})</a>
+                    </div>
+                    <div class="tab-content">
+                        <div class="tab-pane fade show active" id="tab-pane-1">
+                            <h4 class="mb-3">{{ product.product_name.capitalize }} Description</h4>
+                            {{ product.description|safe }}
+                        </div>
+                        <div class="tab-pane fade" id="tab-pane-2">
+                            <h4 class="mb-3">Additional Information</h4>
+                            <div class="row">
+                                {% for option in product.options.all %}
+                                    <div class="col-md-6">
+                                        <ul class="list-group list-group-flush">
+                                            <li class="list-group-item px-0">{{ option.text.capitalize }}</li>
+                                        </ul>
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                        <div class="tab-pane fade" id="tab-pane-3">
+                            <div class="row">
+                                <div class="col-md-6" id="reviews-box">
+                                    <h4 class="mb-4">{{ product.comments.count }} review for "{{ product.product_name }}"</h4>
+                                    {% for comment in product.comments.all %}
+                                        <div class="media mb-4">
+                                            <div class="media-body">
+                                                <h6>{{ comment.name }}<small> -
+                                                    <i>{{ comment.created_at|date:'Y m d' }}</i></small>
+                                                </h6>
+                                                <p>{{ comment.text }}</p>
+                                            </div>
+                                        </div>
+                                    {% endfor %}
+                                </div>
+                                <div class="col-md-6">
+                                    <h4 class="mb-4">Leave a review</h4>
+                                    <small id="res-message" class=""></small>
+                                    <form method="post" style="margin-top: 1rem">
+                                        {% csrf_token %}
+                                        <div class="form-group">
+                                            <label for="message">Your Review</label>
+                                            <textarea id="message" cols="30" rows="5" class="form-control"
+                                                      name="message"></textarea>
+                                        </div>
+                                        <div class="form-group mb-0">
+                                            <input type="submit" id="sub-button" value="Leave Your Review"
+                                                   class="btn btn-primary px-3">
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Shop Detail End -->
+
+
+    <!-- Products Start -->
+    <div class="container-fluid py-5">
+        <h2 class="section-title position-relative text-uppercase mx-xl-5 mb-4"><span class="bg-secondary pr-3">You May Also Like</span>
+        </h2>
+        <div class="row px-xl-5">
+            <div class="col">
+                <div class="owl-carousel related-carousel">
+                    {% for product in category.products.all %}
+                    <div class="product-item bg-light">
+                        <div class="product-img position-relative overflow-hidden">
+                            <img class="img-fluid w-100" src="{{ product.image.url }}" alt="product image">
+                            <div class="product-action">
+                                <a class="btn btn-outline-dark btn-square" href="{% url 'product:productDetail_page' product.slug %}"><i class="fa fa-search"></i></a>
+                            </div>
+                        </div>
+                        <div class="text-center py-4">
+                            <a class="h6 text-decoration-none text-truncate" href="{% url 'product:productDetail_page' product.slug %}">{{ product.product_name }}</a>
+                            <div class="d-flex align-items-center justify-content-center mt-2">
+                                {% if product.discount %}
+                                    <h5>${{ product.discount }}</h5>
+                                    <h6 class="text-muted ml-2">
+                                        <del>${{ product.price }}</del>
+                                    </h6>
+                                {% else %}
+                                    <h5>${{ product.price }}</h5>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Products End -->
+    <script>
+        const submitButton = document.getElementById('sub-button');
+        submitButton.addEventListener('click', function (event) {
+            event.preventDefault();
+
+            let message = document.getElementById('message').value;
+            let formData = new FormData();
+            let responseMessage = document.getElementById('res-message');
+            formData.append('text', message);
+            formData.append('csrfmiddlewaretoken', '{{ csrf_token }}');
+
+            if (message) {
+                axios.post('{% url "product:productDetail_page" product.slug %}', formData)
+                    .then(response => {
+                        if (response.data.status === 401) {
+                            responseMessage.innerText = 'ابتدا در سایت ثبت نام کنید';
+                            responseMessage.className = 'alert alert-danger';
+                        } else {
+                            console.log(response.data);
+                            responseMessage.innerText = 'نظر شما ثبت شد';
+                            responseMessage.className = 'alert alert-info';
+
+                            let reviews = document.querySelector('#tab-pane-3 #reviews-box');
+                            reviews.insertAdjacentHTML('beforeend', `
+                                <div class="media mb-4">
+                                    <div class="media-body">
+                                        <h6>${response.data.name}<small> -
+                                            <i>${response.data.date}</i></small>
+                                        </h6>
+                                        <p>${message}</p>
+                                    </div>
+                                </div>`)
+                        }
+                    })
+                    .catch(err => console.log(err))
+            } else {
+                responseMessage.innerText = 'ابتدا نظر خود را وارد کنید';
+                responseMessage.className = 'alert alert-danger';
+            }
+        })
+    </script>
+{% endblock %}

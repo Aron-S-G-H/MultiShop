@@ -1,0 +1,116 @@
+{% load static %}
+<!doctype html>
+<html class="no-js" lang="">
+
+<head>
+    <meta charset="utf-8">
+    <title>Invoice</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="{% static 'css/invoice.css' %}">
+</head>
+<body>
+
+<div class="web-container">
+    <div class="page-container">
+        Page
+        <span class="page"></span>
+        of
+        <span class="pages"></span>
+    </div>
+
+    <div class="logo-container">
+        <img style="height: 18px" src="https://app.useanvil.com/img/email-logo-black.png" alt="Shop Icon">
+    </div>
+
+    <table class="invoice-info-container">
+        <tr>
+            <td rowspan="2" class="client-name">
+                {{ order.fullname }}
+            </td>
+            <td>
+                Multi Shop
+            </td>
+        </tr>
+        <tr>
+            <td>
+                {{ order.address|truncatewords:10 }}
+            </td>
+        </tr>
+        <tr>
+            <td>
+                Invoice Date: <strong>{{ order.created_at.date| date:'Y m d' }}</strong>
+            </td>
+            <td>
+                {{ order.city }}, {{ order.postal_code }}
+            </td>
+        </tr>
+        <tr>
+            <td>
+                Invoice Id: <strong>{{ order.id }}</strong>
+            </td>
+            <td>
+                {{ order.email }}
+            </td>
+        </tr>
+    </table>
+
+
+    <table class="line-items-container">
+        <thead>
+        <tr>
+            <th class="heading-quantity">Product</th>
+            <th class="heading-description">Quantity</th>
+            <th class="heading-price">Price</th>
+            <th class="heading-subtotal">Subtotal</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for item in order.items.all %}
+        <tr>
+            <td>{{ item.product }}</td>
+            <td>{{ item.quantity }}</td>
+            <td class="right">${{ item.price }}</td>
+            <td class="bold">${{ item.get_cost }}</td>
+        </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+
+    <table class="line-items-container has-bottom-border">
+        <thead>
+        <tr>
+            <th>Payment Info</th>
+            <th>Due By</th>
+            <th>Total Due</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+            <td class="payment-info">
+                <div>
+                    Account No: <strong>'Account number'</strong>
+                </div>
+                <div>
+                    Routing No: <strong>'Transaction number'</strong>
+                </div>
+            </td>
+            <td class="large">{{ order.created_at|date:'Y m d' }}</td>
+            <td class="large total">${{ order.total_price }}</td>
+        </tr>
+        </tbody>
+    </table>
+
+    <div class="footer">
+        <div class="footer-info">
+            <span>multishop.com</span>
+        </div>
+        <div class="footer-thanks">
+            <img src="https://github.com/anvilco/html-pdf-invoice-template/raw/main/img/heart.png" alt="heart">
+            <span>Thank you!</span>
+        </div>
+    </div>
+
+</div>
+</body>
+</html>

@@ -1,0 +1,38 @@
+{% extends 'templates/base.html' %}
+
+{% block main %}
+    <!-- Contact Start -->
+    <div class="container-fluid">
+        <h2 class="section-title position-relative text-uppercase text-center mx-xl-5 mb-4"><span class="bg-secondary pr-3">User Login</span></h2>
+        <div class=" px-xl-5">
+            <div class=" mb-5 contact-us" style="">
+                <div class="contact-form bg-light p-30">
+                    <div id="success"></div>
+                    <form method="post">
+                        {% csrf_token %}
+
+                        <div class="control-group">
+                            {% for error in form.email.errors %}
+                            <P class="alert alert-danger">{{ error }}</P>
+                            {% endfor %}
+                            {{ form.email }}
+                            <p class="help-block text-danger"></p>
+                        </div>
+
+                        <div class="control-group">
+                            {{ form.password }}
+                            <p class="help-block text-danger"></p>
+                        </div>
+                        <p>Dont have an account? <a href="{% url 'account:register_page' %}">Register</a></p>
+                        <div>
+                            <button class="btn btn-primary py-2 px-4" type="submit" id="sendMessageButton">Submit</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+        </div>
+    </div>
+    <!-- Contact End -->
+
+{% endblock %}

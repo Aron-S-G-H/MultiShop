@@ -1,0 +1,92 @@
+{% extends 'templates/base.html' %}
+{% load static %}
+
+{% block main %}
+    <!-- Breadcrumb Start -->
+    <div class="container-fluid">
+        <div class="row px-xl-5">
+            <div class="col-12">
+                <nav class="breadcrumb bg-light mb-30">
+                    <a class="breadcrumb-item text-dark" href="{% url 'product:home_page' %}">Home</a>
+                    <a class="breadcrumb-item text-dark" href="{% url 'product:shop_page' %}">Shop</a>
+                    <span class="breadcrumb-item active">Search Detail</span>
+                </nav>
+                {% if messages %}
+                    {% for message in messages %}
+                        <p class="alert alert-danger d-flex justify-content-center">{{ message }}</p>
+                    {% endfor %}
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    <!-- Breadcrumb End -->
+
+
+    <!-- Shop Start -->
+    <div class="container-fluid">
+        <div class="row px-xl-5 justify-content-center">
+            <!-- Shop Product Start -->
+            <div class="col-lg-9 col-md-8 mt-2">
+                <div class="row pb-3">
+                    {% for product in products_list %}
+                        {% if product.status %}
+                        <div class="col-lg-4 col-md-6 col-sm-6 pb-1">
+                            <div class="product-item bg-light mb-4">
+                                <div class="product-img position-relative overflow-hidden">
+                                    <img class="img-fluid w-100" src="{{ product.image.url }}" alt="product image">
+                                    <div class="product-action">
+                                        <a class="btn btn-outline-dark btn-square" href="#"><i class="far fa-heart"></i></a>
+                                        <a class="btn btn-outline-dark btn-square" href="{% url 'product:productDetail_page' product.slug %}"><i class="fa fa-search"></i></a>
+                                    </div>
+                                </div>
+                                <div class="text-center py-4">
+                                    <a class="h6 text-decoration-none text-truncate" href="{% url 'product:productDetail_page' product.slug %}">{{ product.product_name }}</a>
+                                    <div class="d-flex align-items-center justify-content-center mt-2">
+                                        <h5>${{ product.price }}</h5>
+                                        {% if product.discount %}
+                                        <h6 class="text-muted ml-2">
+                                            <del>${{ product.discount }}</del>
+                                        </h6>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        {% endif %}
+                    {% endfor %}
+
+                    {% if products_list.has_other_pages %}
+                    <div class="col-12">
+                        <nav>
+                            <ul class="pagination justify-content-center">
+                                {% if products_list.has_previous %}
+                                    <li class="page-item"><a class="page-link" href="?page={{ products_list.previous_page_number }}">Previous</a></li>
+                                {% else %}
+                                    <li class="page-item disabled"><a class="page-link" href="#">Previous</a></li>
+                                {% endif %}
+
+                                {% for i in products_list.paginator.page_range %}
+                                    {% if products_list.number == i %}
+                                        <li class="page-item active"><a class="page-link" href="?page={{ i }}">{{ i }}</a></li>
+                                    {% else %}
+                                        <li class="page-item"><a class="page-link" href="?page={{ i }}">{{ i }}</a></li>
+                                    {% endif %}
+                                {% endfor %}
+
+                                {% if products_list.has_next %}
+                                    <li class="page-item"><a class="page-link" href="?page={{ products_list.next_page_number }}">Next</a></li>
+                                {% else %}
+                                    <li class="page-item disabled"><a class="page-link" href="#">Next</a></li>
+                                {% endif %}
+                            </ul>
+                        </nav>
+                    </div>
+                {% endif %}
+                </div>
+            </div>
+            <!-- Shop Product End -->
+        </div>
+    </div>
+    <!-- Shop End -->
+
+{% endblock %}
